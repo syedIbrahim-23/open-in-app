@@ -146,9 +146,10 @@ const checkAndRespondToMail = async (auth, gmail) => {
     console.log(`found ${messages.length} unreplied messages`);
 
     for (const message of messages) {
+      //Sends the mail with help of message with threadId and messageId
       await sendReplyMail(gmail, message);
       console.log(`sent reply to message with id ${message.id}`);
-
+      //After sends the mail it is added to the label
       await addMailToLabel(auth, message, labelId);
       console.log(`Added label to message with id ${message.id}`);
     }
