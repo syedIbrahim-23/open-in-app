@@ -19,6 +19,7 @@ export const responseToMail = async (req, res) => {
   }
 };
 
+// Google OAuth is done here
 const authenticateUser = async () => {
   try {
     const auth = await authenticate({
@@ -36,7 +37,7 @@ const getUnrepliesMessages = async (gmail) => {
   const response = await gmail.users.messages.list({
     userId: "me",
     labelIds: ["INBOX"],
-    q: "-in:chats -from:me -has:userlabels",
+    q: "-is:unread -category:primary ",
   });
   return response.data.messages || [];
 };
@@ -130,15 +131,17 @@ const sendReply = async (gmail, message) => {
   }
 };
 
+//Main function which is responsible to check and respond to mails in a random internval;
 const checkAndRespondToMail = async (auth, gmail) => {
   const randomInterval = Math.floor(Math.random() * (120 - 45 + 1) + 45) * 1000; // Random interval between 45 and 120 seconds
-  const response = await gmail.users.labels.list({ userId: "me" });
+  //Creates the label if doesn't exits, if exists will return the labelId
   const labelId = await createLabel(gmail);
   console.log(`Label has been created  ${labelId}`);
   if (mailInterval) {
     clearInterval(mailInterval);
   }
   mailInterval = setInterval(async () => {
+    //Check for the un replied mails
     const messages = await getUnrepliesMessages(gmail);
     console.log(`found ${messages.length} unreplied messages`);
 
