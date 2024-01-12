@@ -42,7 +42,7 @@ const getUnrepliesMessages = async (gmail) => {
   return response.data.messages || [];
 };
 
-const addLabel = async (auth, message, labelId) => {
+const addMailToLabel = async (auth, message, labelId) => {
   const gmail = google.gmail({ version: "v1", auth });
   await gmail.users.messages.modify({
     userId: "me",
@@ -82,8 +82,8 @@ const createLabel = async (gmail) => {
   }
 };
 
-const sendReply = async (gmail, message) => {
-  console.log("SendReply got hitted");
+const sendReplyMail = async (gmail, message) => {
+  console.log("sendReplyMail got hitted");
 
   try {
     const result = await gmail.users.messages.get({
@@ -146,10 +146,10 @@ const checkAndRespondToMail = async (auth, gmail) => {
     console.log(`found ${messages.length} unreplied messages`);
 
     for (const message of messages) {
-      await sendReply(gmail, message);
+      await sendReplyMail(gmail, message);
       console.log(`sent reply to message with id ${message.id}`);
 
-      await addLabel(auth, message, labelId);
+      await addMailToLabel(auth, message, labelId);
       console.log(`Added label to message with id ${message.id}`);
     }
   }, randomInterval);
