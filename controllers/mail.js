@@ -4,7 +4,6 @@ import { LABEL_NAME, MAIL_BODY, SCOPE_URLS } from "../common/constansts.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { google } from "googleapis";
-import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,7 +12,6 @@ let mailInterval;
 export const responseToMail = async (req, res) => {
   try {
     const auth = await authenticateUser();
-    console.log("Auth",JSON.stringify(auth));
     const gmailRes = google.gmail({ version: "v1", auth:auth });
     await checkAndRespondToMail(auth, gmailRes);
   } catch (error) {
@@ -25,7 +23,7 @@ const authenticateUser = async () => {
   try {
     const auth = await authenticate({
       keyfilePath: path.join(__dirname, "credentials.json"),
-      scopes: SCOPES,
+      scopes: SCOPE_URLS,
     });
     return auth
   } catch (error) {
